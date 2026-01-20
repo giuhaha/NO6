@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cl.dao.JiuzhentongzhiRecordDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.cl.entity.JiuzhentongzhiRecordEntity" id="jiuzhentongzhiRecordMap">
+        <result property="noticeId" column="notice_id"/>
+        <result property="appointmentId" column="appointment_id"/>
+        <result property="noticeType" column="notice_type"/>
+        <result property="noticeMethod" column="notice_method"/>
+        <result property="receiverAccount" column="receiver_account"/>
+        <result property="receiverPhone" column="receiver_phone"/>
+        <result property="content" column="content"/>
+        <result property="sendStatus" column="send_status"/>
+        <result property="failReason" column="fail_reason"/>
+        <result property="retryCount" column="retry_count"/>
+        <result property="nextRetryTime" column="next_retry_time"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectListView"
+		resultType="com.cl.entity.view.JiuzhentongzhiRecordView" >
+
+		SELECT  jiuzhentongzhi_record.* FROM jiuzhentongzhi_record  jiuzhentongzhi_record 	        
+        <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+	
+	<select id="selectView"
+		resultType="com.cl.entity.view.JiuzhentongzhiRecordView" >
+		SELECT * FROM jiuzhentongzhi_record  jiuzhentongzhi_record <where> 1=1 ${ew.sqlSegment}</where>
+	</select>
+
+</mapper>

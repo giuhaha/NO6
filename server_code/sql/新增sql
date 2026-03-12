@@ -1,0 +1,3 @@
+ALTER TABLE cl515882190.jiuzhentongzhi ADD COLUMN tongzhizhuangtai INT ( 11 ) DEFAULT 0 COMMENT '通知状态：0-待发送，1-发送成功，2-发送失败';
+ALTER TABLE cl515882190.jiuzhentongzhi ADD COLUMN chongshicishu INT ( 11 ) DEFAULT 0 COMMENT '重试次数';
+ALTER TABLE cl515882190.jiuzhentongzhi ADD COLUMN shibaoyuanyin VARCHAR ( 100 )  COMMENT '失败原因';

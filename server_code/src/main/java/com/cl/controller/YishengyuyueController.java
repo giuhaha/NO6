@@ -26,8 +26,10 @@ import com.cl.annotation.SysLog;
 
 import com.cl.entity.YishengyuyueEntity;
 import com.cl.entity.view.YishengyuyueView;
+import com.cl.entity.JiuzhentongzhiEntity;
 
 import com.cl.service.YishengyuyueService;
+import com.cl.service.JiuzhentongzhiService;
 import com.cl.service.TokenService;
 import com.cl.utils.PageUtils;
 import com.cl.utils.R;
@@ -141,6 +143,9 @@ public class YishengyuyueController {
 
 
 
+    @Autowired
+    private JiuzhentongzhiService jiuzhentongzhiService;
+
     /**
      * 后端保存
      */
@@ -149,6 +154,8 @@ public class YishengyuyueController {
     public R save(@RequestBody YishengyuyueEntity yishengyuyue, HttpServletRequest request){
     	//ValidatorUtils.validateEntity(yishengyuyue);
         yishengyuyueService.insert(yishengyuyue);
+        // 发送预约成功通知
+        sendAppointmentNotification(yishengyuyue);
         return R.ok();
     }
     
@@ -160,7 +167,58 @@ public class YishengyuyueController {
     public R add(@RequestBody YishengyuyueEntity yishengyuyue, HttpServletRequest request){
     	//ValidatorUtils.validateEntity(yishengyuyue);
         yishengyuyueService.insert(yishengyuyue);
+        // 发送预约成功通知
+        sendAppointmentNotification(yishengyuyue);
         return R.ok();
+    }
+
+    /**
+     * 发送预约成功通知
+     */
+    private void sendAppointmentNotification(YishengyuyueEntity yishengyuyue) {
+        // 创建就诊通知
+        JiuzhentongzhiEntity notification = new JiuzhentongzhiEntity();
+        notification.setTongzhibianhao("T" + System.currentTimeMillis());
+        notification.setYishengzhanghao(yishengyuyue.getYishengzhanghao());
+        notification.setDianhua(yishengyuyue.getDianhua());
+        notification.setJiuzhenshijian(yishengyuyue.getYuyueshijian());
+        notification.setTongzhishijian(new Date());
+        notification.setZhanghao(yishengyuyue.getZhanghao());
+        notification.setShouji(yishengyuyue.getShouji());
+        notification.setTongzhibeizhu("预约成功，就诊时间：" + yishengyuyue.getYuyueshijian());
+        notification.setTongzhizhuangtai(0); // 0-待发送
+        notification.setChongshicishu(0);
+        
+        // 保存通知
+        jiuzhentongzhiService.insert(notification);
+        
+        // 发送通知
+        boolean sendSuccess = sendNotification(notification);
+        
+        // 更新通知状态
+        if (sendSuccess) {
+            notification.setTongzhizhuangtai(1); // 1-发送成功
+        } else {
+            notification.setTongzhizhuangtai(2); // 2-发送失败
+            notification.setShibaoyuanyin("发送失败，请稍后重试");
+        }
+        jiuzhentongzhiService.updateById(notification);
+    }
+
+    /**
+     * 发送通知的实际逻辑
+     */
+    private boolean sendNotification(JiuzhentongzhiEntity notification) {
+        try {
+            // 这里添加实际的通知发送逻辑，比如短信、邮件等
+            // 模拟发送成功
+            System.out.println("发送通知：" + notification.getTongzhibeizhu());
+            return true;
+        } catch (Exception e) {
+            // 发送失败，记录日志
+            System.err.println("通知发送失败：" + e.getMessage());
+            return false;
+        }
     }
 
 
